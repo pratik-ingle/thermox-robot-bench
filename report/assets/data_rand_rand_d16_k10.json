@@ -1,0 +1,41 @@
+{
+ "rand_d16_k10": {
+  "N_eq": 188,
+  "cfg": {
+   "N": 10,
+   "prec": "jac",
+   "rounds": 18.8,
+   "warm": false,
+   "samples": 188.0
+  },
+  "plain_err": 0.10579627055632797,
+  "ir_err": 7.726322645347935e-05,
+  "ir_rounds": 21
+ },
+ "rand_d16_k100": {
+  "N_eq": 1600,
+  "cfg": {
+   "N": 100,
+   "prec": "jac",
+   "rounds": 16.0,
+   "warm": false,
+   "samples": 1600.0
+  },
+  "plain_err": 0.11501800867427568,
+  "ir_err": 6.948154595585439e-05,
+  "ir_rounds": 19
+ },
+ "rand_d16_k1000": {
+  "N_eq": 17200,
+  "cfg": {
+   "N": 1000,
+   "prec": "jac",
+   "rounds": 17.2,
+   "warm": false,
+   "samples": 17200.0
+  },
+  "plain_err": 0.06098399869742362,
+  "ir_err": 7.404312553359611e-05,
+  "ir_rounds": 17
+ }
+}

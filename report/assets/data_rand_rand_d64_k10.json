@@ -1,0 +1,41 @@
+{
+ "rand_d64_k10": {
+  "N_eq": 246,
+  "cfg": {
+   "N": 10,
+   "prec": "jac",
+   "rounds": 24.6,
+   "warm": false,
+   "samples": 246.0
+  },
+  "plain_err": 0.18832535458373906,
+  "ir_err": 9.901000455363815e-05,
+  "ir_rounds": 25
+ },
+ "rand_d64_k100": {
+  "N_eq": 1800,
+  "cfg": {
+   "N": 100,
+   "prec": "jac",
+   "rounds": 18.0,
+   "warm": false,
+   "samples": 1800.0
+  },
+  "plain_err": 0.05585356714432154,
+  "ir_err": 6.502631347660357e-05,
+  "ir_rounds": 18
+ },
+ "rand_d64_k1000": {
+  "N_eq": 16800,
+  "cfg": {
+   "N": 1000,
+   "prec": "jac",
+   "rounds": 16.8,
+   "warm": false,
+   "samples": 16800.0
+  },
+  "plain_err": 0.046787197778632675,
+  "ir_err": 7.199025066122135e-05,
+  "ir_rounds": 17
+ }
+}

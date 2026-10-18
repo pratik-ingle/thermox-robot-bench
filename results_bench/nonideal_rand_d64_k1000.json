@@ -1,0 +1,73 @@
+{
+ "name": "rand_d64_k1000",
+ "desc": "Random SPD d=64, cond=1000",
+ "N_plain": 1000,
+ "N_ir": 1000,
+ "target": 0.0001,
+ "warm": false,
+ "n_systems": 5,
+ "d": 64,
+ "m": 1,
+ "cond_median": 1000.0000000000052,
+ "cond_max": 1000.0000000000168,
+ "jacobi_cond_median": 920.901297120154,
+ "n_matrices": 5,
+ "sweeps": {
+  "mismatch=0.0": {
+   "plain_err": 0.4604231048952175,
+   "ir_rounds": 16.8,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.665680599458345e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.01": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "mismatch=0.03": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "mismatch=0.1": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "bits=6": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "bits=8": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "bits=10": {
+   "plain_err": 0.46623920326737406,
+   "ir_rounds": 17.0,
+   "ir_reached": 1.0,
+   "ir_err_median": 7.445478722865557e-05,
+   "unstable": 0.0
+  },
+  "bits=12": {
+   "plain_err": 0.47728145558452106,
+   "ir_rounds": 16.8,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.765650886031836e-05,
+   "unstable": 0.0
+  }
+ }
+}

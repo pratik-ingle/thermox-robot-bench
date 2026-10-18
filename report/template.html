@@ -1,0 +1,867 @@
+<title>Thermox Refinement Benchmark</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap">
+<style>
+:root {
+  /* Layout: lab-report column (prose <= 68ch, figures at full column width), one sheet per problem, sticky problem index left of the column from 1180px */
+  --paper: #f1f3f4;
+  --sheet: #ffffff;
+  --ink: #15191d;
+  --ink-2: #48525c;
+  --ink-3: #6a747e;
+  --rule: #d6dbe0;
+  --accent: #7a2e57;
+  --accent-soft: #f4e7ee;
+  --plate: #fcfcfb;
+  --ok: #0b6e3a;
+  --ok-soft: #e2f3e9;
+  --bad: #a3271f;
+  --bad-soft: #fbe7e5;
+  --m-exact: #3b4046;
+  --m-plain: #eb6834;
+  --m-ircold: #1baf7a;
+  --m-irwarm: #eda100;
+  --m-cg: #2a78d6;
+  --f-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-data: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e1114; --sheet: #161a1e; --ink: #e6e9ec; --ink-2: #a9b2bb; --ink-3: #87919b;
+    --rule: #2b3238; --accent: #e7a6c9; --accent-soft: #2c1d26; --ok: #6fd39a; --ok-soft: #12271b;
+    --bad: #ff9a90; --bad-soft: #2d1513; --m-exact: #c9ced3; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0e1114; --sheet: #161a1e; --ink: #e6e9ec; --ink-2: #a9b2bb; --ink-3: #87919b;
+  --rule: #2b3238; --accent: #e7a6c9; --accent-soft: #2c1d26; --ok: #6fd39a; --ok-soft: #12271b;
+  --bad: #ff9a90; --bad-soft: #2d1513; --m-exact: #c9ced3; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 400 17px/1.62 var(--f-body);
+  -webkit-text-size-adjust: 100%;
+}
+.page {
+  max-width: 1240px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px;
+}
+@media (min-width: 1180px) {
+  .page { grid-template-columns: 220px minmax(0, 1fr); gap: 56px; }
+  .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start;
+         max-height: calc(100vh - 48px); overflow-y: auto; }
+  .mast, .findings { grid-column: 1 / -1; }
+}
+main { min-width: 0; display: grid; gap: 64px; max-width: 920px; }
+section { display: grid; gap: 22px; min-width: 0; }
+h1, h2, h3, h4 { font-family: var(--f-display); text-wrap: balance; margin: 0; color: var(--ink); }
+h1 { font-size: clamp(34px, 5vw, 50px); line-height: 1.08; font-weight: 600; letter-spacing: -0.01em; }
+h2 { font-size: clamp(26px, 3.2vw, 34px); line-height: 1.15; font-weight: 600; }
+h3 { font-size: clamp(21px, 2.4vw, 25px); line-height: 1.2; font-weight: 600; }
+h4 { font-family: var(--f-body); font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+     text-transform: uppercase; color: var(--ink-3); }
+p, li { max-width: 68ch; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, video:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+strong { font-weight: 700; }
+code, .data { font-family: var(--f-data); font-size: 0.88em; }
+.eyebrow { font: 600 12px/1.4 var(--f-data); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--ink-2); }
+.small { font-size: 15px; }
+
+/* masthead */
+.mast { display: grid; gap: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+.dek { font-size: 20px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; }
+.meta { font: 13px/1.5 var(--f-data); color: var(--ink-3); }
+.legend { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 15px; margin-top: 4px; }
+.legend li { display: flex; align-items: baseline; gap: 8px; max-width: 34ch; }
+.sw { flex: none; display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--c); transform: translateY(1px); }
+.m { white-space: nowrap; font-weight: 600; }
+.m::before { content: ""; display: inline-block; width: 0.62em; height: 0.62em; border-radius: 2px;
+  background: var(--c); margin-right: 0.3em; transform: translateY(-0.06em); }
+.m-exact { --c: var(--m-exact); } .m-plain { --c: var(--m-plain); } .m-ircold { --c: var(--m-ircold); }
+.m-irwarm { --c: var(--m-irwarm); } .m-cg { --c: var(--m-cg); }
+
+/* findings */
+.findings { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px;
+  padding: clamp(18px, 3vw, 30px); display: grid; gap: 16px; }
+.findings ol { list-style: none; padding: 0; display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.findings li { max-width: none; display: grid; gap: 4px; padding-top: 12px; border-top: 2px solid var(--ink); }
+.findings li b { font-family: var(--f-display); font-size: 19px; font-weight: 600; line-height: 1.3; }
+.findings li span { color: var(--ink-2); font-size: 15.5px; }
+
+/* toc */
+.toc { font-size: 15px; display: grid; gap: 14px; align-content: start; }
+.toc ol { list-style: none; padding: 0; gap: 2px; }
+.toc a { color: var(--ink-2); text-decoration: none; display: block; padding: 2px 0; }
+.toc a:hover { color: var(--accent); }
+.toc .grp { font: 600 11px/1.3 var(--f-data); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-top: 10px; }
+.toc .pid { font-family: var(--f-data); font-size: 12px; color: var(--ink-3); display: inline-block; width: 2.6em; }
+@media (max-width: 1179px) {
+  .toc { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; }
+  .toc .cols { columns: 2 220px; column-gap: 28px; }
+}
+
+/* figures */
+figure { margin: 0; display: grid; gap: 8px; min-width: 0; }
+.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: 8px; overflow: hidden; }
+.plate img, .plate video { display: block; width: 100%; height: auto; max-width: 100%; }
+figcaption { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); max-width: 78ch; }
+figcaption b { color: var(--ink); }
+.pair { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); align-items: start; }
+
+/* diagrams */
+.diagram { overflow-x: auto; color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; }
+.diagram svg { display: block; width: 100%; min-width: 620px; height: auto; }
+.diagram.narrow svg { min-width: 300px; max-width: 420px; }
+.diagram text { font-family: var(--f-body); font-size: 14px; fill: currentColor; }
+.diagram .t-head { font-weight: 700; font-size: 15px; }
+.diagram .t-data { font-family: var(--f-data); font-size: 13px; }
+.diagram .t-muted { fill: var(--ink-3); font-size: 13px; }
+.diagram .box { fill: none; stroke: currentColor; stroke-width: 1.4; }
+.diagram .hl { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.6; }
+.diagram .wire { stroke: currentColor; stroke-width: 1.6; fill: none; }
+.diagram .wire-hl { stroke: var(--accent); stroke-width: 2; fill: none; }
+.diagram .dot { fill: var(--ink-3); }
+.diagram .dot-hl { fill: var(--accent); }
+.diagram .arrowhead { fill: currentColor; }
+
+/* problems */
+.family { display: grid; gap: 22px; }
+.family > header { display: grid; gap: 10px; }
+.problem { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px;
+  padding: clamp(18px, 3vw, 30px); display: grid; gap: 18px; min-width: 0; scroll-margin-top: 20px; }
+.p-head { display: grid; gap: 10px; }
+.p-head h3 { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.pid-big { font: 600 15px var(--f-data); color: var(--accent); }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 0; }
+.facts div { display: grid; gap: 1px; }
+.facts dt { font: 600 11px/1.3 var(--f-data); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+.facts dd { margin: 0; font: 600 15px/1.3 var(--f-data); font-variant-numeric: tabular-nums; }
+.verdict { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { font: 600 12.5px/1.2 var(--f-data); padding: 5px 10px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); background: var(--sheet); }
+.pill.ok { color: var(--ok); background: var(--ok-soft); border-color: transparent; }
+.pill.bad { color: var(--bad); background: var(--bad-soft); border-color: transparent; }
+.p-body { display: grid; gap: 14px; min-width: 0; }
+.tbl { overflow-x: auto; min-width: 0; }
+table.num { border-collapse: collapse; width: 100%; min-width: 600px; font: 13px/1.4 var(--f-data); font-variant-numeric: tabular-nums; }
+table.num th, table.num td { padding: 7px 10px; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: top; }
+table.num thead th { font-weight: 600; color: var(--ink-3); font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; border-bottom: 1.5px solid var(--ink-3); }
+table.num tbody th { text-align: left; font-weight: 600; color: var(--ink); }
+table.num td:first-child, table.num th:first-child { text-align: left; }
+table.overview td.v { text-align: left; }
+table.overview .pill { font-size: 11px; padding: 3px 8px; display: inline-block; margin: 0 4px 4px 0; }
+table.overview th a { color: var(--ink); }
+table.text { min-width: 560px; font-family: var(--f-body); font-size: 15px; }
+table.num tr.r-plain th, table.num tr.r-plain td { color: var(--ink-2); }
+table.num tr.r-plain th::before { content: ""; display: inline-block; width: 0.6em; height: 0.6em; border-radius: 2px; background: var(--m-plain); margin-right: 0.4em; }
+.tnote { font: 12.5px/1.45 var(--f-body); color: var(--ink-3); margin-top: 6px; max-width: 80ch; }
+table.text td, table.text th { text-align: left; }
+.eq { font-family: var(--f-data); font-size: 15px; background: var(--paper); border-left: 3px solid var(--accent);
+  padding: 10px 14px; border-radius: 0 6px 6px 0; overflow-x: auto; white-space: nowrap; max-width: 100%; }
+.note { font-size: 15px; color: var(--ink-2); border-left: 3px solid var(--rule); padding-left: 14px; }
+.callout { background: var(--accent-soft); border-radius: 8px; padding: 16px 18px; display: grid; gap: 8px; }
+.callout p { max-width: 72ch; }
+.rand-grid { display: grid; gap: 22px; }
+footer.end { font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 6px; }
+</style>
+
+<div class="page">
+
+<header class="mast">
+  <p class="eyebrow">Thermodynamic computing for robotics · benchmark report · 18 October 2026</p>
+  <h1>Thermox Refinement Benchmark</h1>
+  <p class="dek">Seventeen linear-algebra problems, from the Kalman filter of a pick-and-place robot to dense random matrices. Each one is solved by an exact digital method, a standard digital iteration, a simulated thermodynamic chip on its own, and the same chip inside digital iterative refinement.</p>
+  <p class="meta">Emulator: thermox 0.0.3 (Ornstein–Uhlenbeck sampler) · robot: Franka Panda in MuJoCo · accuracy target: 1e-4 relative error unless stated</p>
+  <ul class="legend" aria-label="Methods compared">
+    <li><span class="sw" style="--c: var(--m-exact)"></span><span><b>Exact</b>: digital Cholesky solve, the reference answer</span></li>
+    <li><span class="sw" style="--c: var(--m-cg)"></span><span><b>CG</b>: digital conjugate gradient, the standard iterative method</span></li>
+    <li><span class="sw" style="--c: var(--m-plain)"></span><span><b>Plain thermox</b>: one chip run of N samples, averaged</span></li>
+    <li><span class="sw" style="--c: var(--m-ircold)"></span><span><b>IR cold</b>: chip inside iterative refinement, starting from zero</span></li>
+    <li><span class="sw" style="--c: var(--m-irwarm)"></span><span><b>IR warm</b>: the same, starting from the previous answer</span></li>
+  </ul>
+</header>
+
+<section class="findings" aria-labelledby="findings-h">
+  <h2 id="findings-h">Findings</h2>
+  <ol>
+    <li><b>Refinement fixes the chip's accuracy problem.</b><span>Reaching 1e-4 with plain thermox would take 10⁸–10¹² samples. Inside iterative refinement the same chip needs 40–33,000. It converged on 16 of the 17 problems.</span></li>
+    <li><b>Chip time follows difficulty, not size.</b><span>About 200, 1,700 and 17,000 samples at condition number κ = 10, 100 and 1000, whether the matrix has 16 or 256 rows. At κ ≈ 15,000 (P6) it never converges.</span></li>
+    <li><b>For robot-sized problems the CPU wins.</b><span>Kalman gains, arm IK and a 70-variable MPC take 0.3–10 µs on one CPU core. The same solves need 4–330 µs on an optimistic future chip and 0.3–21 ms on today's prototype-class hardware.</span></li>
+    <li><b>The chip pulls ahead only on large dense systems.</b><span>At d = 256 an optimistic chip is between 1.3× slower and 2× faster than the CPU. Extrapolated to d ≥ 1024 it is about 1.3–5× faster than one core.</span></li>
+    <li><b>Imperfect hardware is where refinement matters most, and where it hits a wall.</b><span>With 10% component mismatch plain thermox is 30–290% off while refinement still reaches the target. On hard problems (κ ≈ 1000) just 1% mismatch makes the chip physically unstable.</span></li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <div class="cols">
+  <ol>
+    <li><a href="#methods">How the solvers work</a></li>
+    <li><a href="#problems">The 17 problems</a></li>
+  </ol>
+  <p class="grp">Robot perception</p>
+  <ol>
+    <li><a href="#p-kf_iso"><span class="pid">P1</span>KF gain, isotropic</a></li>
+    <li><a href="#p-kf_depth3"><span class="pid">P2</span>KF gain, depth 3×</a></li>
+    <li><a href="#p-kf_depth10"><span class="pid">P3</span>KF gain, depth 10×</a></li>
+  </ol>
+  <p class="grp">Robot motion</p>
+  <ol>
+    <li><a href="#p-ik"><span class="pid">P4</span>Arm IK</a></li>
+    <li><a href="#p-mpc"><span class="pid">P5</span>Torque MPC</a></li>
+    <li><a href="#p-mpc_hard"><span class="pid">P6</span>Torque MPC, hard</a></li>
+  </ol>
+  <p class="grp">Physics simulation</p>
+  <ol>
+    <li><a href="#p-heat8"><span class="pid">P7</span>Heat, 8×8</a></li>
+    <li><a href="#p-heat16"><span class="pid">P8</span>Heat, 16×16</a></li>
+  </ol>
+  <p class="grp">Random dense matrices</p>
+  <ol>
+    <li><a href="#p-rand_d16_k10"><span class="pid">P9</span>d=16, κ=10</a></li>
+    <li><a href="#p-rand_d16_k100"><span class="pid">P10</span>d=16, κ=100</a></li>
+    <li><a href="#p-rand_d16_k1000"><span class="pid">P11</span>d=16, κ=1000</a></li>
+    <li><a href="#p-rand_d64_k10"><span class="pid">P12</span>d=64, κ=10</a></li>
+    <li><a href="#p-rand_d64_k100"><span class="pid">P13</span>d=64, κ=100</a></li>
+    <li><a href="#p-rand_d64_k1000"><span class="pid">P14</span>d=64, κ=1000</a></li>
+    <li><a href="#p-rand_d256_k10"><span class="pid">P15</span>d=256, κ=10</a></li>
+    <li><a href="#p-rand_d256_k100"><span class="pid">P16</span>d=256, κ=100</a></li>
+    <li><a href="#p-rand_d256_k1000"><span class="pid">P17</span>d=256, κ=1000</a></li>
+  </ol>
+  <ol>
+    <li><a href="#results">Results across all problems</a></li>
+    <li><a href="#practical">Physical practicality</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#appendix">Reproduce &amp; sources</a></li>
+  </ol>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============================================================ METHODS -->
+<section id="methods" aria-labelledby="methods-h">
+  <p class="eyebrow">Part 1</p>
+  <h2 id="methods-h">How the solvers work</h2>
+
+  <h3>The common task</h3>
+  <p>Every problem here is a linear system: find <i>x</i> in <span class="data">A·x = b</span>. <span class="data">A</span> is a known square table of numbers (symmetric and positive definite) and <span class="data">b</span> is known. Robots solve thousands of these every second. They use them to weigh a camera reading against a prediction (Kalman filter), to turn a desired hand motion into joint motions (inverse kinematics), and to plan torques a fraction of a second ahead (model predictive control).</p>
+  <p>Two numbers describe how hard a system is. The <b>size d</b> is the number of unknowns. The <b>condition number κ</b> measures how unequal the matrix's eigenvalues are: κ = 1 is trivial and κ = 10,000 is hard. For a thermodynamic chip κ matters most, because the slowest direction of the system relaxes κ times slower than the fastest.</p>
+
+  <h3>How a thermodynamic chip solves A·x = b</h3>
+  <p>The chip is a set of d coupled analog cells. In Normal Computing's prototype these are 8 RLC circuits on a circuit board. The couplings are programmed so the cells' voltages are pulled toward the solution <i>x*</i>, while heat noise keeps shaking them. The voltages never settle; they wander around <i>x*</i>, and averaging their readings over time gives an estimate of it. thermox simulates exactly this process, an Ornstein–Uhlenbeck process.</p>
+  <p>Two things limit the accuracy of that average:</p>
+  <ul>
+    <li><b>Start-up bias.</b> The chip starts at <span class="data">x₀ = 0</span>, and the early readings drag the average toward zero.</li>
+    <li><b>Slow averaging.</b> The noise only averages out like 1/√time, so 10× more accuracy costs 100× more chip time.</li>
+  </ul>
+  <figure>
+    <div class="plate"><img src="assets/method_ou.gif" width="912" height="380" alt="Animation: a two-dimensional chip state wanders around the true solution while its running average slowly approaches it; the error of the average falls roughly like one over the square root of time."></div>
+    <figcaption><b>A 2-cell chip at work.</b> The orange trail is the chip's state shaken by heat noise. The black dot is its running average, and the cross is the true solution. Right: the error of the average falls only like 1/√time, and it wanders while doing so. After 80 relaxation times this run is still about 50% off, because the matrix's slow direction takes 4 relaxation times to forget each kick.</figcaption>
+  </figure>
+
+  <h3>Iterative refinement: check the answer, then solve only for the mistake</h3>
+  <p>The chip's error is a fixed fraction ε of whatever it is asked to solve. So the improved method asks it for something small:</p>
+  <ol>
+    <li>The digital computer checks the current answer exactly: <span class="data">r = b − A·x</span>.</li>
+    <li>It scales that leftover <span class="data">r</span> up to the chip's full input range.</li>
+    <li>The chip solves for the missing piece <span class="data">d</span>.</li>
+    <li>The computer adds it: <span class="data">x ← x + d</span>.</li>
+  </ol>
+  <p>Each round multiplies the remaining error by ε (with ε = 0.5: 50% → 25% → 12.5%). Accuracy therefore improves geometrically with rounds instead of like 1/√time. Warm start uses the robot's previous answer as the starting point. The robot solves a slightly different system every few milliseconds, so the first leftover is already tiny.</p>
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 760 290" role="img" aria-label="Iterative refinement loop: the digital computer computes the residual exactly, sends it scaled to the chip, the chip returns a time-averaged correction, and the computer adds it; warm start feeds the previous answer in as the starting point.">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker>
+          <marker id="ahl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dot-hl" d="M0,0 L10,5 L0,10 z"/></marker>
+        </defs>
+        <text x="170" y="20" text-anchor="middle" class="t-muted">x₀ = previous answer (warm) or 0 (cold)</text>
+        <line class="wire" x1="170" y1="28" x2="170" y2="58" marker-end="url(#ah)"/>
+        <rect class="box" x="20" y="62" width="300" height="180" rx="8"/>
+        <text x="40" y="92" class="t-head">Digital computer (float64)</text>
+        <text x="40" y="124" class="t-data">1  r = b − A·x   (exact check)</text>
+        <text x="40" y="152" class="t-data">2  s = max |r|   (scale)</text>
+        <text x="40" y="180" class="t-data">4  x ← x + s·d   (update)</text>
+        <text x="40" y="222" class="t-muted">repeat until error ≤ target</text>
+        <rect class="hl" x="440" y="62" width="300" height="180" rx="8"/>
+        <text x="460" y="92" class="t-head">Thermodynamic chip</text>
+        <text x="460" y="124">programmed once with A</text>
+        <text x="460" y="152" class="t-data">3  relaxes toward A·d = r/s</text>
+        <text x="460" y="180">averages N noisy samples</text>
+        <text x="460" y="222" class="t-muted">error ≈ ε(N) × size of d</text>
+        <line class="wire-hl" x1="322" y1="118" x2="436" y2="118" marker-end="url(#ahl)"/>
+        <text x="379" y="108" text-anchor="middle" class="t-data">r / s</text>
+        <text x="379" y="140" text-anchor="middle" class="t-muted">DAC</text>
+        <line class="wire-hl" x1="438" y1="186" x2="324" y2="186" marker-end="url(#ahl)"/>
+        <text x="381" y="176" text-anchor="middle" class="t-data">d</text>
+        <text x="381" y="208" text-anchor="middle" class="t-muted">ADC</text>
+        <text x="380" y="276" text-anchor="middle" class="t-muted">one round = one exact digital check + one chip solve of N samples</text>
+      </svg>
+    </div>
+    <figcaption><b>The refinement loop.</b> The two highlighted arrows are the only traffic between the computer and the chip: a scaled leftover goes in and a correction comes out. Each crossing costs converter time on real hardware.</figcaption>
+  </figure>
+  <figure>
+    <div class="plate"><img src="assets/method_ir_clouds.png" width="1560" height="507" alt="Left: 300 plain thermox answers with 30 samples scatter widely around the solution. Middle: 300 refinement answers with 3 rounds of 10 samples cluster tightly. Right: with the same chip time, refinement error falls to machine precision while plain error falls slowly."></div>
+    <figcaption><b>Same chip time, very different accuracy.</b> 300 repeated solves of a 2-cell system (κ = 4) with 30 samples each. Plain thermox spreads widely (median error 42%). Refinement with 3 rounds of 10 samples is 9% off. Right: at 1,000 samples refinement reaches machine precision, while plain thermox is still about 8% off.</figcaption>
+  </figure>
+
+  <h3>The digital baselines</h3>
+  <ul>
+    <li><span class="m m-exact">Exact (Cholesky)</span> factorises the matrix and solves directly in about d³/3 operations. It gives the reference answer.</li>
+    <li><span class="m m-cg">CG (conjugate gradient)</span> is the standard iterative method. Each step costs one matrix–vector product (about 2d² operations), the same digital cost as one refinement round. The Jacobi-preconditioned variant (PCG) was also tried, cold and warm, and the best result is reported.</li>
+  </ul>
+
+  <h3>Rules that keep the comparison fair</h3>
+  <ul>
+    <li><b>Same targets.</b> Relative error 1e-2, 1e-4 and 1e-6 against numpy's exact answer. A configuration counts only if at least 95% of its solves reach the target.</li>
+    <li><b>Chip time in samples.</b> One sample is the chip's fastest relaxation time. The matrix is scaled so its largest eigenvalue maps to that speed.</li>
+    <li><b>Full converter range.</b> Each input is scaled so its largest entry uses its converter's full range, because every cell has its own converter.</li>
+    <li><b>Best configuration for every method.</b> Refinement: N from 10 to 1,000 samples per round, with or without Jacobi scaling, cold or warm. CG: plain or Jacobi, cold or warm.</li>
+    <li><b>Equal chip time in every comparison picture.</b> Plain thermox gets exactly as many samples as refinement used, so each picture shows the same hardware time used two ways.</li>
+  </ul>
+  <p>Wall-clock times use one x86 CPU core (about 1 GFLOP/s on tiny matrices, rising to 20 GFLOP/s at d = 256) and three chip scenarios:</p>
+  <div class="tbl">
+    <table class="num text">
+      <thead><tr><th>Scenario</th><th>Relaxation time</th><th>Per-round overhead</th><th>Matrix programming</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><th>Prototype-class</th><td>0.5 µs</td><td>50 µs</td><td>1 µs per entry</td><td>Normal Computing's 8-cell circuit-board chip (FPGA, 12 MHz 10-bit ADC, host link)</td></tr>
+        <tr><th>Optimistic chip</th><td>10 ns</td><td>200 ns</td><td>row-parallel, plus d² entries over a 50 Gb/s link</td><td>a future integrated chip; none exists yet</td></tr>
+        <tr><th>Physical limit</th><td>1 ns</td><td>free</td><td>free</td><td>an upper bound, not a design</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ PROBLEMS -->
+<section id="problems" aria-labelledby="problems-h">
+  <p class="eyebrow">Part 2</p>
+  <h2 id="problems-h">The 17 problems</h2>
+  <p>Eight problems come from the robot and from physics simulation, and nine are synthetic matrices that vary size and difficulty independently. Each problem page below follows the same layout:</p>
+  <ul>
+    <li>a strip of facts and two verdict chips;</li>
+    <li>a plain-language explanation;</li>
+    <li>a picture comparing the methods' solutions at equal chip time;</li>
+    <li>convergence curves for one representative solve: chip time on the left, digital work on the right;</li>
+    <li>the numbers: chip samples and digital steps to 1e-4, then the estimated time per solve to 1e-2 and 1e-4 for the CPU, plain thermox and refinement on each chip scenario.</li>
+  </ul>
+  <div class="tbl"><!--@overview--></div>
+  <p class="note">"Verdict" compares the optimistic integrated chip with the faster of the two CPU methods, at 1e-4. The prototype-class chip is slower than the CPU on every problem, by 200× to 15,000×.</p>
+
+  <!-- ===================== robot perception -->
+  <div class="family" id="fam-kf">
+    <header>
+      <p class="eyebrow">Robot perception · P1–P3</p>
+      <h3>The Kalman filter in the pick-and-place robot</h3>
+    </header>
+    <p>A Franka Panda arm picks a 4 cm cube off a conveyor moving at 8 cm/s. A simulated camera reports the cube's position 33 times a second with about 1.5 cm of noise. A Kalman filter combines these noisy readings with a constant-velocity model to estimate where the cube is and how fast it moves, and the arm aims for where the cube will be.</p>
+    <p>At every camera frame the filter must solve <span class="data">S·Kᵀ = H·P</span> for its gain <span class="data">K</span>. Here <span class="data">S = H·P·Hᵀ + R</span> is a 3×3 matrix built from the filter's uncertainty <span class="data">P</span> and the camera noise <span class="data">R</span>, and there are 6 right-hand sides. The gain decides how much to trust each new reading.</p>
+    <div class="pair">
+      <figure>
+        <div class="plate"><img src="assets/scene_still.png" width="400" height="354" alt="The Panda arm reaching over the conveyor toward the red cube, with the cube's path, the filter estimate and the gripper path drawn as lines."></div>
+        <figcaption><b>The scene.</b> White is the true cube path, coloured is the filter's estimate, green is the gripper path, red dots are camera readings and yellow is the predicted intercept point.</figcaption>
+      </figure>
+      <figure>
+        <div class="plate"><img src="assets/kf_noise.png" width="1365" height="806" alt="Scatter plots of simulated camera errors in top and side views for three cameras: round for the isotropic camera, increasingly elongated ellipses for 3 times and 10 times depth noise."></div>
+        <figcaption><b>Three cameras.</b> A depth camera is much noisier along its viewing ray. That tilted, stretched noise makes <span class="data">S</span> harder to solve: κ ≈ 1, 9 and 94.</figcaption>
+      </figure>
+    </div>
+
+    <article class="problem" id="p-kf_iso">
+      <header class="p-head">
+        <h3><span class="pid-big">P1</span>Kalman gain, isotropic camera</h3>
+        <!--@facts kf_iso-->
+        <div class="verdict"><!--@verdict kf_iso--></div>
+      </header>
+      <div class="p-body">
+        <h4>The problem</h4>
+        <p>The camera is equally noisy in every direction, so the filter's uncertainty is the same in x, y and z. <span class="data">S</span> is then just a number times the identity, the easiest system possible (κ = 1). This is the system from the original pick-and-place test.</p>
+        <h4>What happened</h4>
+        <p>With 39 chip samples per gain, <span class="m m-plain">plain thermox</span> gets the gain wrong by 27% on average. The filter tolerates this for position (7.6 mm error versus 6.7 mm exact), but its velocity estimate suffers more (17.6 versus 14.7 mm/s).</p>
+        <p>With the same 39 samples, <span class="m m-irwarm">IR warm</span> starts from the previous gain and needs 3.9 rounds of 10 samples to land within 0.006% of it. That filter is indistinguishable from the exact one. <span class="m m-cg">CG</span> needs less than one iteration on average, because a scaled identity is solved in one step.</p>
+        <figure>
+          <div class="plate"><video src="assets/kf_robot.mp4" width="1600" height="360" autoplay muted loop playsinline controls preload="metadata" aria-label="Side-by-side simulation of four robots picking the cube: exact solve, plain thermox with 10000 samples, plain thermox with 10 samples, and refinement with 3 rounds of 10 samples."></video></div>
+          <figcaption><b>The robot itself</b> (from the earlier 100-seed test, which used the original solver scaling). Panels: exact, plain thermox N = 10,000, plain thermox N = 10, and refinement with 3 rounds of 10 samples from the previous gain. Over 100 seeds the refinement solver matched the exact solver's pick outcome on every seed (94% success). Plain N = 10 dropped to 89%.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/solve_kf_iso.png" width="1430" height="936" alt="Four panels comparing exact, plain thermox and refinement in the Kalman filter: top-view estimates, gain error per update, position error and velocity error over time."></div>
+          <figcaption><b>Solutions compared at equal chip time (39 samples per gain).</b> Top right: plain thermox's gain is 10–40% off at every update, while refinement stays at the 1e-4 target. Bottom: the refinement filter (yellow) sits on the exact filter (grey); plain thermox (orange) wanders.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_kf_iso.png" width="1365" height="468" alt="Convergence curves: plain thermox error falls slowly with samples, refinement cold and warm fall steeply; CG converges in one step."></div>
+          <figcaption><b>Convergence for one gain update.</b> Left: refinement reaches 1e-4 in about 90 samples cold and 30 warm; plain thermox needs about 10⁸. Right: CG solves this trivial system in one matrix–vector product.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost kf_iso--></div>
+        <div class="tbl"><!--@time kf_iso--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-kf_depth3">
+      <header class="p-head">
+        <h3><span class="pid-big">P2</span>Kalman gain, depth noise 3×</h3>
+        <!--@facts kf_depth3-->
+        <div class="verdict"><!--@verdict kf_depth3--></div>
+      </header>
+      <div class="p-body">
+        <h4>The problem</h4>
+        <p>The camera is 3× noisier along its viewing ray, which points obliquely down at the belt. The noise is a tilted ellipsoid, so <span class="data">S</span> becomes a full 3×3 matrix with κ ≈ 9.</p>
+        <h4>What happened</h4>
+        <p>At 88 chip samples per gain, <span class="m m-plain">plain thermox</span> is 30% off, giving 10.9 mm position error versus 10.1 mm exact. <span class="m m-irwarm">IR warm</span> with Jacobi scaling needs 8.8 rounds of 10 samples and matches the exact filter. Raising the condition number from 1 to 9 more than doubled the chip time refinement needs (39 → 88 samples).</p>
+        <figure>
+          <div class="plate"><img src="assets/solve_kf_depth3.png" width="1430" height="936" alt="Kalman filter comparison with 3 times depth noise: estimates, gain error, position and velocity error."></div>
+          <figcaption><b>Solutions compared at equal chip time (88 samples per gain).</b> The measurements spread more widely, plain thermox's gain is about 30% off at every update, and refinement holds 1e-4.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_kf_depth3.png" width="1365" height="468" alt="Convergence curves for the 3 times depth-noise Kalman gain."></div>
+          <figcaption><b>Convergence for one gain update.</b> CG still needs only 1–2 steps on a 3×3 system, while refinement needs about 9 rounds.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost kf_depth3--></div>
+        <div class="tbl"><!--@time kf_depth3--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-kf_depth10">
+      <header class="p-head">
+        <h3><span class="pid-big">P3</span>Kalman gain, depth noise 10×</h3>
+        <!--@facts kf_depth10-->
+        <div class="verdict"><!--@verdict kf_depth10--></div>
+      </header>
+      <div class="p-body">
+        <h4>The problem</h4>
+        <p>Ten times more noise along the viewing ray gives κ ≈ 94. The slowest direction of <span class="data">S</span> now relaxes 94× slower on the chip than the fastest. Each refinement round therefore needs about 100 samples before it reliably shrinks the error.</p>
+        <h4>What happened</h4>
+        <p>At 1,159 samples <span class="m m-plain">plain thermox</span>'s gain is 44% off. Surprisingly, in this run the filter's position error was slightly lower than exact (21.4 versus 22.5 mm). A Kalman filter tolerates moderate gain errors, and a smaller gain can help on one particular noise realisation; averaged over many runs the exact gain is the best one.</p>
+        <p><span class="m m-irwarm">IR warm</span> needs 11.6 rounds of 100 samples and matches the exact filter. For the optimistic chip this is the worst robot problem, at 224× slower than a CPU solve.</p>
+        <figure>
+          <div class="plate"><img src="assets/solve_kf_depth10.png" width="1430" height="936" alt="Kalman filter comparison with 10 times depth noise: estimates, gain error, position and velocity error."></div>
+          <figcaption><b>Solutions compared at equal chip time (1,159 samples per gain).</b> The measurement cloud is stretched along the viewing ray. Plain thermox's gain error climbs to around 50% once the filter settles, and refinement stays at 1e-4.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_kf_depth10.png" width="1365" height="468" alt="Convergence curves for the 10 times depth-noise Kalman gain."></div>
+          <figcaption><b>Convergence for one gain update.</b> With N = 100 per round, each round cuts the error by about 1.4–1.6×. Plain thermox would need about 10¹⁰ samples to reach 1e-4.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost kf_depth10--></div>
+        <div class="tbl"><!--@time kf_depth10--></div>
+      </div>
+    </article>
+  </div>
+
+  <!-- ===================== robot motion -->
+  <div class="family" id="fam-motion">
+    <header>
+      <p class="eyebrow">Robot motion · P4–P6</p>
+      <h3>Moving the arm: inverse kinematics and model predictive control</h3>
+    </header>
+
+    <article class="problem" id="p-ik">
+      <header class="p-head">
+        <h3><span class="pid-big">P4</span>Arm inverse kinematics</h3>
+        <!--@facts ik-->
+        <div class="verdict"><!--@verdict ik--></div>
+      </header>
+      <div class="p-body">
+        <h4>The problem</h4>
+        <p>100 times a second the controller turns the desired gripper pose into joint angles by damped least squares, repeating the step 4 times per tick:</p>
+        <p class="eq">Δq = Jᵀ (J·Jᵀ + λ²I)⁻¹ e</p>
+        <p>Here <span class="data">J</span> is the arm's 6×7 Jacobian and <span class="data">e</span> is the 6-D position and orientation error. The 6×6 system changes every tick, and it gets harder (κ ≈ 90, up to 144) when the arm nears awkward poses. The benchmark uses the first of the 4 steps per tick. The robot run below puts the chip in every step.</p>
+        <figure>
+          <div class="plate"><img src="assets/ik_still.png" width="400" height="354" alt="The Panda arm mid-approach over the conveyor." style="max-width: 420px"></div>
+          <figcaption><b>Mid-approach at t = 2.4 s.</b> Each tick, IK converts the green gripper path into the 7 joint angles.</figcaption>
+        </figure>
+        <h4>What happened</h4>
+        <p>We ran the whole pick-and-place with the IK solve replaced, keeping the exact Kalman filter. At the same 572 samples per solve, <span class="m m-plain">plain thermox</span> is 7.6% off on each solve. The 4 IK steps per tick still correct it: the final pose is within 0.23 µm instead of 0.015 µm, and all three robots grasp the cube identically (9.41 mm, picked).</p>
+        <p>IK is the most forgiving problem in the set, because it does not need an accurate linear solve at all. <span class="m m-irwarm">IR warm</span> still reaches 1e-4 with 19 rounds of 30 samples. <span class="m m-cg">CG</span> needs 6 iterations, as expected for a 6×6 system.</p>
+        <figure>
+          <div class="plate"><video src="assets/ik_robot.mp4" width="1200" height="360" autoplay muted loop playsinline controls preload="metadata" aria-label="Three robots side by side with IK solved exactly, by plain thermox with 572 samples, and by refinement; all three pick the cube."></video></div>
+          <figcaption><b>The robot with each IK solver.</b> Exact, plain thermox (572 samples per solve) and refinement. The motions are indistinguishable and all three pick the cube.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/solve_ik.png" width="1560" height="468" alt="IK residuals over time for the three solvers and the error of each IK linear solve."></div>
+          <figcaption><b>Solutions compared at equal chip time.</b> Left and middle: pose error left after the 4 IK steps. Plain thermox spikes to about 5 µm and 0.0003°, which is harmless for a 15 mm grasp tolerance. Right: each linear solve is about 8% off with plain thermox and at 1e-4 with refinement.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_ik.png" width="1365" height="468" alt="Convergence curves for one IK solve."></div>
+          <figcaption><b>Convergence for one IK solve.</b> CG finishes in 6 steps; refinement needs about 20 rounds of 30 samples.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost ik--></div>
+        <div class="tbl"><!--@time ik--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-mpc">
+      <header class="p-head">
+        <h3><span class="pid-big">P5</span>Torque MPC</h3>
+        <!--@facts mpc-->
+        <div class="verdict"><!--@verdict mpc--></div>
+      </header>
+      <div class="p-body">
+        <h4>The problem</h4>
+        <p>Model predictive control plans joint torques 0.2 s ahead (10 steps of 20 ms) at every tick, using the arm's mass matrix <span class="data">M(q)</span> at its current pose. It applies the first step of the plan and replans on the next tick. The plan is the solution of a 70×70 system <span class="data">H·U = −g</span>: 7 joints × 10 steps of torque. A weight on torque effort, set to 0.01 here, decides the conditioning: κ ≈ 1,500.</p>
+        <figure>
+          <div class="plate"><img src="assets/mpc_illustration.png" width="1625" height="481" alt="Left: a joint angle history, the reference ahead and the 10-step MPC prediction. Middle: the 70 by 70 Hessian magnitude on a log scale. Right: eigenvalues for two torque weights."></div>
+          <figcaption><b>What the solve produces.</b> Left: the 10-step prediction (blue) pulls the lagging joint toward its reference. Middle: the Hessian couples every joint and step. Right: a lower torque weight lowers the smallest eigenvalues, which is what P6 tests.</figcaption>
+        </figure>
+        <h4>What happened</h4>
+        <p>At 29,221 samples per plan, <span class="m m-plain">plain thermox</span> gives torque plans that are wrong by about 200%. The first torque, the one actually applied, is off by up to 5 N·m. <span class="m m-irwarm">IR warm</span> needs 29 rounds of 1,000 samples and matches the exact plan. <span class="m m-cg">CG</span> needs 26 iterations.</p>
+        <figure>
+          <div class="plate"><img src="assets/solve_mpc.png" width="1625" height="832" alt="Predicted joint trajectories and planned torques at three times for exact, plain thermox and refinement."></div>
+          <figcaption><b>Solutions compared at equal chip time (29,221 samples per plan), at three moments of the run.</b> Top: predicted joint deviation from the reference. Bottom: the planned torques. Refinement (yellow) lies on the exact plan (grey); plain thermox's torques jump around.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_mpc.png" width="1365" height="468" alt="Convergence curves for one MPC solve."></div>
+          <figcaption><b>Convergence for one plan.</b> With N = 1,000 per round, each round shrinks the error only about 1.3–1.4×, because the chip's slowest direction relaxes 1,500 sample-times. Warm start barely helps here: the plan shifts by a whole step between ticks.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost mpc--></div>
+        <div class="tbl"><!--@time mpc--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-mpc_hard">
+      <header class="p-head">
+        <h3><span class="pid-big">P6</span>Torque MPC, low torque weight</h3>
+        <!--@facts mpc_hard-->
+        <div class="verdict"><!--@verdict mpc_hard--></div>
+      </header>
+      <div class="p-body">
+        <h4>The problem</h4>
+        <p>This is the same controller with a torque weight 10× smaller (0.001). The robot may then use more torque to track tightly, but the system is 10× harder, with κ ≈ 15,000. Low input weights like this are common in practice.</p>
+        <h4>What happened</h4>
+        <p>This is the one problem the thermodynamic approach could not solve. <span class="m m-irwarm">Refinement</span> stalls after a few rounds even with 1,000 samples per round, because a round no longer reliably shrinks the error. <span class="m m-plain">Plain thermox</span> with 40,000 samples is 440% off. <span class="m m-cg">CG</span> still converges in 58 iterations.</p>
+        <p>Making it work would need more than 15,000 samples per round, or a preconditioner that tames the conditioning before the matrix goes on the chip.</p>
+        <figure>
+          <div class="plate"><img src="assets/solve_mpc_hard.png" width="1625" height="832" alt="Predicted joint trajectories and planned torques for the low torque weight MPC: both thermodynamic methods deviate from the exact plan."></div>
+          <figcaption><b>Solutions compared at equal chip time (40,000 samples per plan).</b> Both chip methods give wrong plans. The stalled refinement is off by 69% (median over the run), and plain thermox is off by 440%.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_mpc_hard.png" width="1365" height="468" alt="Convergence curves for the hard MPC solve: refinement flattens out, CG converges."></div>
+          <figcaption><b>Convergence for one plan.</b> The refinement curves flatten, while CG keeps going.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost mpc_hard--></div>
+        <div class="tbl"><!--@time mpc_hard--></div>
+      </div>
+    </article>
+  </div>
+
+  <!-- ===================== heat -->
+  <div class="family" id="fam-heat">
+    <header>
+      <p class="eyebrow">Physics simulation · P7–P8</p>
+      <h3>A heated plate: the friendliest case for analog hardware</h3>
+    </header>
+    <p>A square plate on an n×n grid is warmed by a heat source that moves across it, and the temperature is stepped forward with implicit Euler: <span class="data">(I + αL)·u<sub>k+1</sub> = u<sub>k</sub> + f<sub>k</sub></span>. <span class="data">L</span> links each cell to its four neighbours.</p>
+    <p>The matrix never changes, so the chip is programmed once and each time step only sends a new right-hand side. That removes the reprogramming cost that hurts the robot problems. Each step also starts close to the previous temperature field, which suits warm start.</p>
+    <div class="pair">
+      <figure>
+        <div class="diagram narrow">
+          <svg viewBox="0 0 320 230" role="img" aria-label="Five-point stencil: a cell's new temperature depends on itself and its four neighbours, so each matrix row has five non-zero entries.">
+            <g>
+              <circle class="dot" cx="40" cy="30" r="4"/><circle class="dot" cx="80" cy="30" r="4"/><circle class="dot" cx="120" cy="30" r="4"/><circle class="dot" cx="160" cy="30" r="4"/><circle class="dot" cx="200" cy="30" r="4"/>
+              <circle class="dot" cx="40" cy="70" r="4"/><circle class="dot" cx="80" cy="70" r="4"/><circle class="dot" cx="160" cy="70" r="4"/><circle class="dot" cx="200" cy="70" r="4"/>
+              <circle class="dot" cx="40" cy="110" r="4"/><circle class="dot" cx="200" cy="110" r="4"/>
+              <circle class="dot" cx="40" cy="150" r="4"/><circle class="dot" cx="80" cy="150" r="4"/><circle class="dot" cx="160" cy="150" r="4"/><circle class="dot" cx="200" cy="150" r="4"/>
+              <circle class="dot" cx="40" cy="190" r="4"/><circle class="dot" cx="80" cy="190" r="4"/><circle class="dot" cx="120" cy="190" r="4"/><circle class="dot" cx="160" cy="190" r="4"/><circle class="dot" cx="200" cy="190" r="4"/>
+            </g>
+            <line class="wire-hl" x1="120" y1="110" x2="80" y2="110"/><line class="wire-hl" x1="120" y1="110" x2="160" y2="110"/>
+            <line class="wire-hl" x1="120" y1="110" x2="120" y2="70"/><line class="wire-hl" x1="120" y1="110" x2="120" y2="150"/>
+            <circle class="dot-hl" cx="120" cy="110" r="8"/>
+            <circle class="dot-hl" cx="80" cy="110" r="5"/><circle class="dot-hl" cx="160" cy="110" r="5"/>
+            <circle class="dot-hl" cx="120" cy="70" r="5"/><circle class="dot-hl" cx="120" cy="150" r="5"/>
+            <text x="128" y="132" class="t-data">1+4α</text>
+            <text x="74" y="98" text-anchor="end" class="t-data">−α</text>
+            <text x="128" y="62" class="t-data">−α</text>
+            <text x="168" y="98" class="t-data">−α</text>
+            <text x="128" y="172" class="t-data">−α</text>
+            <text x="228" y="100" class="t-head">one row</text>
+            <text x="228" y="120" class="t-muted">of I + αL:</text>
+            <text x="228" y="140" class="t-muted">5 non-zeros</text>
+          </svg>
+        </div>
+        <figcaption><b>The five-point stencil.</b> A cell's new temperature is coupled to its four neighbours, so on a chip each cell needs just four couplings.</figcaption>
+      </figure>
+      <figure>
+        <div class="plate"><img src="assets/heat_illustration.png" width="1560" height="481" alt="Left: the temperature field on the 8 by 8 grid with the source path. Middle: the banded sparsity pattern of the matrix. Right: its eigenvalues for both grid sizes."></div>
+        <figcaption><b>The system.</b> Left: temperature at step 16 and the path of the heat source. Middle: the matrix is banded. Right: eigenvalues; the 16×16 grid is about twice as hard (κ 53 versus 24).</figcaption>
+      </figure>
+    </div>
+
+    <article class="problem" id="p-heat8">
+      <header class="p-head">
+        <h3><span class="pid-big">P7</span>Heat equation, 8×8 grid</h3>
+        <!--@facts heat8-->
+        <div class="verdict"><!--@verdict heat8--></div>
+      </header>
+      <div class="p-body">
+        <h4>What happened</h4>
+        <p>With 64 cells and κ ≈ 24, we simulated 30 time steps, feeding each method's own answer into the next step. At 327 samples per step, <span class="m m-plain">plain thermox</span> leaves the temperature field 10–15% off. The error does not grow here, because heat diffusion smooths errors away. <span class="m m-irwarm">IR warm</span> needs 10.9 rounds of 30 samples and stays within 1e-4.</p>
+        <figure>
+          <div class="plate"><img src="assets/solve_heat8.gif" width="1116" height="292" alt="Animation of 30 time steps: the exact, plain thermox and refinement temperature fields side by side, with the error of each method plotted against the time step."></div>
+          <figcaption><b>Solutions compared at equal chip time (327 samples per step).</b> The plain thermox field is visibly speckled and dimmer, while the refinement field matches the exact one.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_heat8.png" width="1365" height="468" alt="Convergence curves for one heat step."></div>
+          <figcaption><b>Convergence for one time step.</b> Warm start from the previous field saves about a third of the rounds. CG needs 14 steps.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost heat8--></div>
+        <div class="tbl"><!--@time heat8--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-heat16">
+      <header class="p-head">
+        <h3><span class="pid-big">P8</span>Heat equation, 16×16 grid</h3>
+        <!--@facts heat16-->
+        <div class="verdict"><!--@verdict heat16--></div>
+      </header>
+      <div class="p-body">
+        <h4>What happened</h4>
+        <p>With 256 cells and κ ≈ 53, <span class="m m-plain">plain thermox</span> at 594 samples per step drifts: the field error grows from 7% at the first step to 17% at step 30, because each step's error feeds the next. <span class="m m-irwarm">IR warm</span> with 19.8 rounds of 30 samples holds 1e-4.</p>
+        <p>This is the closest any real-world problem came to the CPU. The fixed matrix means programming is paid once, and the optimistic chip is 2.7× slower than a Cholesky solve that reuses its factorisation. It is faster than CG.</p>
+        <figure>
+          <div class="plate"><img src="assets/solve_heat16.gif" width="1116" height="292" alt="Animation of 30 time steps on the 16 by 16 grid comparing exact, plain thermox and refinement fields, with error over time."></div>
+          <figcaption><b>Solutions compared at equal chip time (594 samples per step).</b> Plain thermox's error climbs as it accumulates; refinement stays flat at the target.</figcaption>
+        </figure>
+        <figure>
+          <div class="plate"><img src="assets/conv_heat16.png" width="1365" height="468" alt="Convergence curves for one 16 by 16 heat step."></div>
+          <figcaption><b>Convergence for one time step.</b> CG needs 20 steps and refinement about 20 rounds, so the digital work is the same here.</figcaption>
+        </figure>
+        <h4>Numbers</h4>
+        <div class="tbl"><!--@cost heat16--></div>
+        <div class="tbl"><!--@time heat16--></div>
+      </div>
+    </article>
+  </div>
+
+  <!-- ===================== random -->
+  <div class="family" id="fam-rand">
+    <header>
+      <p class="eyebrow">Random dense matrices · P9–P17</p>
+      <h3>Separating size from difficulty</h3>
+    </header>
+    <p>Nine synthetic problems cover every combination of size d = 16, 64 or 256 and difficulty κ = 10, 100 or 1000. The eigenvalues are spread evenly on a log scale between 1 and κ and the eigenvectors are random, so every entry of the matrix is non-zero. Each problem has 5 independent systems, so warm start does not apply.</p>
+    <p>The pattern across all nine:</p>
+    <ul>
+      <li>At equal chip time, plain thermox is 4–19% off.</li>
+      <li>Refinement reaches 1e-4 in about 16–34 rounds.</li>
+      <li>The chip time it needs grows about 10× for every 10× in κ, and hardly at all with d.</li>
+      <li>CG iterations grow with √κ, and are capped near d for the small matrices.</li>
+    </ul>
+
+    <div class="rand-grid">
+    <article class="problem" id="p-rand_d16_k10">
+      <header class="p-head"><h3><span class="pid-big">P9</span>Random SPD, d = 16, κ = 10</h3><!--@facts rand_d16_k10--><div class="verdict"><!--@verdict rand_d16_k10--></div></header>
+      <div class="p-body">
+        <p>Small and easy. Refinement needs 19 rounds of 10 samples (188 samples) and CG needs 11 iterations. At equal chip time plain thermox is 11% off.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d16_k10.png" width="1560" height="481" alt="Matrix entries, eigenvalues and computed versus exact solution entries for d 16, kappa 10."></div><figcaption><b>Matrix and solutions at equal chip time.</b> Right: points on the diagonal line are exact. Plain thermox's points scatter around it, while refinement's sit on it.</figcaption></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d16_k10.png" width="1365" height="468" alt="Convergence curves for d 16, kappa 10."></div></figure>
+        <div class="tbl"><!--@cost rand_d16_k10--></div>
+        <div class="tbl"><!--@time rand_d16_k10--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d16_k100">
+      <header class="p-head"><h3><span class="pid-big">P10</span>Random SPD, d = 16, κ = 100</h3><!--@facts rand_d16_k100--><div class="verdict"><!--@verdict rand_d16_k100--></div></header>
+      <div class="p-body">
+        <p>Ten times harder, so each round needs 10× more samples: 16 rounds of 100. CG needs 16 iterations, which is all a 16-unknown system can ever take. The optimistic chip is 35× slower than the CPU.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d16_k100.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 16, kappa 100."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d16_k100.png" width="1365" height="468" alt="Convergence curves for d 16, kappa 100."></div></figure>
+        <div class="tbl"><!--@cost rand_d16_k100--></div>
+        <div class="tbl"><!--@time rand_d16_k100--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d16_k1000">
+      <header class="p-head"><h3><span class="pid-big">P11</span>Random SPD, d = 16, κ = 1000</h3><!--@facts rand_d16_k1000--><div class="verdict"><!--@verdict rand_d16_k1000--></div></header>
+      <div class="p-body">
+        <p>This is the worst ratio in the study: the optimistic chip is 274× slower than the CPU. Refinement needs 17 rounds of 1,000 samples, while CG still needs only 18 iterations because the system is small. Chip time grows with κ, but the CPU's does not.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d16_k1000.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 16, kappa 1000."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d16_k1000.png" width="1365" height="468" alt="Convergence curves for d 16, kappa 1000."></div></figure>
+        <div class="tbl"><!--@cost rand_d16_k1000--></div>
+        <div class="tbl"><!--@time rand_d16_k1000--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d64_k10">
+      <header class="p-head"><h3><span class="pid-big">P12</span>Random SPD, d = 64, κ = 10</h3><!--@facts rand_d64_k10--><div class="verdict"><!--@verdict rand_d64_k10--></div></header>
+      <div class="p-body">
+        <p>Refinement needs 25 rounds of 10 samples and CG needs 14 iterations. Plain thermox at equal chip time is 19% off. The optimistic chip is within 2.4× of the CPU, which now pays d³/3 ≈ 87,000 operations for Cholesky.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d64_k10.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 64, kappa 10."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d64_k10.png" width="1365" height="468" alt="Convergence curves for d 64, kappa 10."></div></figure>
+        <div class="tbl"><!--@cost rand_d64_k10--></div>
+        <div class="tbl"><!--@time rand_d64_k10--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d64_k100">
+      <header class="p-head"><h3><span class="pid-big">P13</span>Random SPD, d = 64, κ = 100</h3><!--@facts rand_d64_k100--><div class="verdict"><!--@verdict rand_d64_k100--></div></header>
+      <div class="p-body">
+        <p>This is the first problem where refinement needs fewer digital steps than CG: 18 rounds versus 36 iterations. The chip is still 4.2× slower in wall-clock time, because each round waits for 100 samples and a round trip.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d64_k100.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 64, kappa 100."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d64_k100.png" width="1365" height="468" alt="Convergence curves for d 64, kappa 100."></div></figure>
+        <div class="tbl"><!--@cost rand_d64_k100--></div>
+        <div class="tbl"><!--@time rand_d64_k100--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d64_k1000">
+      <header class="p-head"><h3><span class="pid-big">P14</span>Random SPD, d = 64, κ = 1000</h3><!--@facts rand_d64_k1000--><div class="verdict"><!--@verdict rand_d64_k1000--></div></header>
+      <div class="p-body">
+        <p>Refinement needs 17 rounds against CG's 75 iterations, so the digital saving grows with κ. But each round now waits for 1,000 samples, and the optimistic chip is 23× slower in total.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d64_k1000.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 64, kappa 1000."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d64_k1000.png" width="1365" height="468" alt="Convergence curves for d 64, kappa 1000."></div></figure>
+        <div class="tbl"><!--@cost rand_d64_k1000--></div>
+        <div class="tbl"><!--@time rand_d64_k1000--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d256_k10">
+      <header class="p-head"><h3><span class="pid-big">P15</span>Random SPD, d = 256, κ = 10</h3><!--@facts rand_d256_k10--><div class="verdict"><!--@verdict rand_d256_k10--></div></header>
+      <div class="p-body">
+        <p>Refinement needs 34 rounds of 10 samples and CG needs 15 iterations. Cholesky now costs 5.6 million operations, so CG is the CPU's best option. The optimistic chip is 1.3× slower than CG.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d256_k10.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 256, kappa 10."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d256_k10.png" width="1365" height="468" alt="Convergence curves for d 256, kappa 10."></div></figure>
+        <div class="tbl"><!--@cost rand_d256_k10--></div>
+        <div class="tbl"><!--@time rand_d256_k10--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d256_k100">
+      <header class="p-head"><h3><span class="pid-big">P16</span>Random SPD, d = 256, κ = 100</h3><!--@facts rand_d256_k100--><div class="verdict"><!--@verdict rand_d256_k100--></div></header>
+      <div class="p-body">
+        <p>This is the only measured problem where the optimistic chip beats the CPU: 132 µs, against 266 µs for Cholesky and 281 µs for CG. It wins because refinement needs 18 rounds where CG needs 45 iterations, and both pay one matrix–vector product per step.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d256_k100.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 256, kappa 100."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d256_k100.png" width="1365" height="468" alt="Convergence curves for d 256, kappa 100."></div></figure>
+        <div class="tbl"><!--@cost rand_d256_k100--></div>
+        <div class="tbl"><!--@time rand_d256_k100--></div>
+      </div>
+    </article>
+
+    <article class="problem" id="p-rand_d256_k1000">
+      <header class="p-head"><h3><span class="pid-big">P17</span>Random SPD, d = 256, κ = 1000</h3><!--@facts rand_d256_k1000--><div class="verdict"><!--@verdict rand_d256_k1000--></div></header>
+      <div class="p-body">
+        <p>Refinement needs 17 rounds against CG's 126 iterations, the biggest digital saving in the study. The chip still loses to Cholesky by 1.3×. Each round needs 1,000 samples, and the one-off matrix must first be estimated and programmed.</p>
+        <figure><div class="plate"><img src="assets/solve_rand_d256_k1000.png" width="1560" height="481" alt="Matrix entries, eigenvalues and solution comparison for d 256, kappa 1000."></div></figure>
+        <figure><div class="plate"><img src="assets/conv_rand_d256_k1000.png" width="1365" height="468" alt="Convergence curves for d 256, kappa 1000."></div></figure>
+        <div class="tbl"><!--@cost rand_d256_k1000--></div>
+        <div class="tbl"><!--@time rand_d256_k1000--></div>
+      </div>
+    </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ RESULTS -->
+<section id="results" aria-labelledby="results-h">
+  <p class="eyebrow">Part 3</p>
+  <h2 id="results-h">Results across all problems</h2>
+  <figure>
+    <div class="plate"><img src="assets/bench_cost_to_accuracy.png" width="1820" height="1250" alt="For all 17 problems: chip samples needed to reach 1e-4 for plain thermox, IR cold and IR warm; and digital matrix-vector products for CG versus IR."></div>
+    <figcaption><b>Chip time and digital work to reach 1e-4.</b> Left: plain thermox (orange, mostly extrapolated) needs 10⁸–10¹² samples, and refinement needs 10²–10⁴. Right: CG wins on small problems; refinement needs fewer digital steps once d ≥ 64 and κ ≥ 100.</figcaption>
+  </figure>
+  <figure>
+    <div class="plate"><img src="assets/bench_scaling_random_spd.png" width="1540" height="560" alt="Random SPD problems: refinement chip samples grow with kappa but not with d; CG iterations grow with the square root of kappa and with d."></div>
+    <figcaption><b>Size versus difficulty.</b> Refinement's chip time depends on κ only, while CG's iterations grow with √κ and with d.</figcaption>
+  </figure>
+  <figure>
+    <div class="plate"><img src="assets/bench_wall_clock.png" width="1400" height="1250" alt="Estimated time per solve for every problem: CPU Cholesky and CG versus refinement on three chip scenarios."></div>
+    <figcaption><b>Estimated time per solve.</b> The CPU (grey squares, blue dots) is fastest on every problem below d = 256. The prototype-class chip (green) is 200–15,000× slower everywhere. Even the physical-limit device (pink) only wins at d = 256.</figcaption>
+  </figure>
+  <figure>
+    <div class="plate"><img src="assets/bench_size_scaling.png" width="2100" height="644" alt="Time per one-off dense solve as size grows from 16 to 16384, measured up to 256 and extrapolated beyond, for three condition numbers."></div>
+    <figcaption><b>Where would a chip win?</b> Dense one-off solves, measured up to d = 256 and extrapolated beyond (shaded). The optimistic chip crosses below the CPU near d = 256–1024. At d = 4096 it is about 4× faster than one CPU core at κ = 100, and about 5× at κ = 1000. The gain comes from needing fewer digital matrix–vector products, not from chip speed. A GPU or a strong preconditioner on the CPU would move the crossover further out.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ PRACTICAL -->
+<section id="practical" aria-labelledby="practical-h">
+  <p class="eyebrow">Part 4</p>
+  <h2 id="practical-h">Physical practicality</h2>
+  <p>The emulator's chip is perfect apart from heat noise. Real analog parts are not, so the benchmark added two kinds of imperfection. <b>Coupling mismatch</b> is a fixed random error on every programmed matrix entry, as component tolerances cause. <b>Low-precision converters</b> round inputs, outputs and couplings to 6–12 bits.</p>
+  <figure>
+    <div class="plate"><img src="assets/bench_nonidealities.png" width="1800" height="1130" alt="Plain thermox error and refinement rounds as coupling mismatch and converter resolution vary, for six problems; crosses mark physically unstable chips."></div>
+    <figcaption><b>Imperfect hardware.</b> Left: imperfections push plain thermox to 30–290% error. Right: refinement still reaches 1e-4, needing a few extra rounds (heat 8×8: 10.9 → 15.7 rounds at 10% mismatch). Crosses mark problems where the programmed matrix lost positive definiteness, so the physical process diverges. That happened for the κ ≈ 1000–1500 problems at just 1% mismatch, and for the MPC at 8 bits or fewer.</figcaption>
+  </figure>
+  <div class="callout">
+    <p><b>Rule of thumb from the stability failures:</b> coupling precision must be finer than about 1/κ. A problem with κ = 1000 needs couplings accurate to better than 0.1%. Today's parts are far coarser. Normal Computing's prototype offers 4 diagonal capacitor values and 3 coupling values (−, 0, +), and IBM's 2023 analog chip uses 8-bit inputs and outputs.</p>
+  </div>
+  <div class="tbl">
+    <table class="num text">
+      <thead><tr><th>Requirement</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><th>Each chip solve less than 100% wrong, so refinement converges</th><td>Met in emulation for κ up to about 1000, with about κ samples per round</td></tr>
+        <tr><th>Reprogram the matrix every control tick</th><td>The main cost for robotics: d² entries per tick. For d ≤ 70 this alone takes longer than a whole CPU solve</td></tr>
+        <tr><th>One computer↔chip round trip per refinement round</th><td>4–35 per solve. That needs on-chip converters (about 100 ns), not a circuit board on a USB link (about 50 µs)</td></tr>
+        <tr><th>Coupling precision finer than 1/κ</th><td>Not available today for κ ≳ 100. Ill-conditioned robot problems such as MPC need preconditioning first</td></tr>
+        <tr><th>Large all-to-all arrays (d ≥ 1000)</th><td>Needed for any speed advantage: about a million programmable couplings at d = 1024. Analog memory chips reach 64 × 256² cells at 8 bits, but no thermodynamic solver that size exists</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ CONCLUSION -->
+<section id="conclusion" aria-labelledby="conclusion-h">
+  <p class="eyebrow">Part 5</p>
+  <h2 id="conclusion-h">Conclusion</h2>
+  <p><b>The method works.</b> Iterative refinement turns a thermodynamic chip from a slow, noisy averager into a solver whose accuracy improves by a fixed factor every round. It reached 1e-4 on 16 of 17 problems with 10⁵–10⁷× less chip time than plain thermox. It also absorbs the component mismatch and coarse converters that real analog hardware has.</p>
+  <p><b>For a robot, a thermodynamic co-processor is not practical today.</b> A robot's linear algebra is small: a 3×3 Kalman gain, a 6×6 IK step, a 70×70 MPC plan. A CPU core solves these in 0.3–10 µs. Any analog chip must first be loaded with a new matrix, wait for its slowest mode to relax, and exchange data several times per solve. Even on an optimistic future chip that adds up to 4–330 µs. Some robot tasks barely need accuracy anyway: IK picked the cube with a 7.6%-wrong solver, and the Kalman filter tolerated 30–44% gain errors.</p>
+  <p><b>Where it could matter.</b> The case for the hardware is large dense systems (d of 1,000 or more) with moderate conditioning, solved on a chip with fast on-chip converters and couplings precise to better than 1/κ. In that regime the chip acts like a very strong preconditioner: at d = 256, refinement needed 2.5–7× fewer digital steps than CG once κ ≥ 100. Nobody has built that chip yet. If it is built, warm-started iterative refinement is the right way to drive it.</p>
+  <p class="note">Natural next experiments: precondition the MPC before it goes on the chip, test d ≥ 1000 directly, and add output-voltage limits and drift to the emulator.</p>
+</section>
+
+<!-- ============================================================ APPENDIX -->
+<section id="appendix" aria-labelledby="appendix-h">
+  <p class="eyebrow">Appendix</p>
+  <h2 id="appendix-h">Reproduce &amp; sources</h2>
+  <p>Everything is in the project folder <span class="data">kf_thermox_pick_place/</span>. Set <span class="data">PANDA_DIR</span> to the MuJoCo Menagerie Panda model and <span class="data">MUJOCO_GL=egl</span> on a headless Linux machine, then run:</p>
+  <p class="eq">python thermo_benchmark.py --problem all &amp;&amp; python thermo_benchmark.py --report</p>
+  <p class="eq">python report/make_assets.py --part method,kf,ik,mpc,heat,rand,tables,results &amp;&amp; python report/assemble.py</p>
+  <ul class="small">
+    <li><b>Wall-clock times are a model, not measurements.</b> The parameters are stated above, and results beyond d = 256 are extrapolated.</li>
+    <li><b>Oracle stopping.</b> Both CG and refinement stop on the true error; a real controller would stop on the residual.</li>
+    <li><b>Original robot test.</b> The pick-and-place video in P1 comes from that test, which scaled inputs by their total length rather than per converter.</li>
+    <li><b>Emulator limits.</b> thermox models no output voltage limit, parasitic dynamics or drift. Real devices would do somewhat worse.</li>
+  </ul>
+  <h3>Sources</h3>
+  <ul class="small">
+    <li>Melanson et al., Thermodynamic computing system for AI applications (the SPU prototype), <a href="https://arxiv.org/abs/2312.04836">arXiv:2312.04836</a></li>
+    <li>Aifer et al., Thermodynamic linear algebra, <a href="https://arxiv.org/abs/2308.05660">arXiv:2308.05660</a></li>
+    <li>Aifer et al., Error mitigation for thermodynamic computing, <a href="https://arxiv.org/abs/2401.16231">arXiv:2401.16231</a></li>
+    <li>Le Gallo et al., Mixed-precision in-memory computing, Nature Electronics 2018, <a href="https://arxiv.org/abs/1701.04279">arXiv:1701.04279</a></li>
+    <li>Le Gallo et al., A 64-core mixed-signal in-memory compute chip (IBM HERMES), <a href="https://arxiv.org/abs/2212.02872">arXiv:2212.02872</a></li>
+    <li>Frison et al., BLASFEO (small dense linear-algebra performance), <a href="https://arxiv.org/abs/1704.02457">arXiv:1704.02457</a></li>
+  </ul>
+  <footer class="end">
+    <p>Emulated with thermox 0.0.3 and MuJoCo 3.16 on CPU.</p>
+  </footer>
+</section>
+
+</main>
+</div>
+
+<script>
+(function () {
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.querySelectorAll("video[autoplay]").forEach(function (v) { v.removeAttribute("autoplay"); v.pause(); });
+    }
+  } catch (e) {}
+})();
+</script>

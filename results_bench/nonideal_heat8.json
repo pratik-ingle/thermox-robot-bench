@@ -1,0 +1,73 @@
+{
+ "name": "heat8",
+ "desc": "Heat equation 8x8 grid (d=64)",
+ "N_plain": 1000,
+ "N_ir": 30,
+ "target": 0.0001,
+ "warm": true,
+ "n_systems": 30,
+ "d": 64,
+ "m": 1,
+ "cond_median": 24.162050006319078,
+ "cond_max": 24.162050006319078,
+ "jacobi_cond_median": 24.162050006319042,
+ "n_matrices": 1,
+ "sweeps": {
+  "mismatch=0.0": {
+   "plain_err": 0.047023040952680416,
+   "ir_rounds": 10.9,
+   "ir_reached": 1.0,
+   "ir_err_median": 7.914303205720097e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.01": {
+   "plain_err": 0.08255454445112073,
+   "ir_rounds": 11.066666666666666,
+   "ir_reached": 1.0,
+   "ir_err_median": 8.09858068350247e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.03": {
+   "plain_err": 0.16870844222052364,
+   "ir_rounds": 12.433333333333334,
+   "ir_reached": 1.0,
+   "ir_err_median": 7.460288553463255e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.1": {
+   "plain_err": 0.3311124834271454,
+   "ir_rounds": 15.7,
+   "ir_reached": 1.0,
+   "ir_err_median": 8.248133462018215e-05,
+   "unstable": 0.0
+  },
+  "bits=6": {
+   "plain_err": 0.26411235159318264,
+   "ir_rounds": 10.433333333333334,
+   "ir_reached": 1.0,
+   "ir_err_median": 7.197342142175385e-05,
+   "unstable": 0.0
+  },
+  "bits=8": {
+   "plain_err": 0.1160503379493674,
+   "ir_rounds": 11.5,
+   "ir_reached": 1.0,
+   "ir_err_median": 7.015719506999913e-05,
+   "unstable": 0.0
+  },
+  "bits=10": {
+   "plain_err": 0.058541610467442454,
+   "ir_rounds": 10.9,
+   "ir_reached": 1.0,
+   "ir_err_median": 7.332389489234675e-05,
+   "unstable": 0.0
+  },
+  "bits=12": {
+   "plain_err": 0.04902575228217585,
+   "ir_rounds": 10.933333333333334,
+   "ir_reached": 1.0,
+   "ir_err_median": 7.094339379937317e-05,
+   "unstable": 0.0
+  }
+ }
+}

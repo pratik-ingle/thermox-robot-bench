@@ -1,0 +1,9 @@
+numpy
+jax
+thermox>=0.0.3
+fmmax<1.0  # thermox 0.0.3 imports fmmax.utils.eig, removed in fmmax 1.x
+mujoco>=3.2
+matplotlib
+pillow
+imageio
+imageio-ffmpeg

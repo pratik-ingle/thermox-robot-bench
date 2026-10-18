@@ -1,0 +1,73 @@
+{
+ "name": "ik",
+ "desc": "Arm IK, damped least squares (d=6)",
+ "N_plain": 1000,
+ "N_ir": 100,
+ "target": 0.0001,
+ "warm": true,
+ "n_systems": 60,
+ "d": 6,
+ "m": 1,
+ "cond_median": 137.85491363469055,
+ "cond_max": 143.74649291043383,
+ "jacobi_cond_median": 39.705647031601,
+ "n_matrices": 60,
+ "sweeps": {
+  "mismatch=0.0": {
+   "plain_err": 0.043785672334283474,
+   "ir_rounds": 7.633333333333334,
+   "ir_reached": 1.0,
+   "ir_err_median": 5.85429346859729e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.01": {
+   "plain_err": 0.04580077445865599,
+   "ir_rounds": 7.183333333333334,
+   "ir_reached": 1.0,
+   "ir_err_median": 5.263121837634647e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.03": {
+   "plain_err": 0.21486719198151738,
+   "ir_rounds": 6.316666666666666,
+   "ir_reached": 1.0,
+   "ir_err_median": 5.112981591273833e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.1": {
+   "plain_err": 2.868441318333575,
+   "ir_rounds": 9.316666666666666,
+   "ir_reached": 0.9166666666666666,
+   "ir_err_median": 5.1154479828810736e-05,
+   "unstable": 0.0
+  },
+  "bits=6": {
+   "plain_err": 0.10837184470915515,
+   "ir_rounds": 7.3,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.16227674669855e-05,
+   "unstable": 0.0
+  },
+  "bits=8": {
+   "plain_err": 0.03777649967039896,
+   "ir_rounds": 7.733333333333333,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.458549957073578e-05,
+   "unstable": 0.0
+  },
+  "bits=10": {
+   "plain_err": 0.05004864512085736,
+   "ir_rounds": 7.6,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.508215566282453e-05,
+   "unstable": 0.0
+  },
+  "bits=12": {
+   "plain_err": 0.0392683335116153,
+   "ir_rounds": 7.633333333333334,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.365768114592547e-05,
+   "unstable": 0.0
+  }
+ }
+}

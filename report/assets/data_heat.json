@@ -1,0 +1,30 @@
+{
+ "heat8": {
+  "N_eq": 327,
+  "cfg": {
+   "N": 30,
+   "prec": "none",
+   "rounds": 10.9,
+   "warm": true,
+   "samples": 327.0
+  },
+  "plain_final": 0.09668783251014584,
+  "ir_final": 7.585608920070227e-05,
+  "plain_first": 0.14618115237589518,
+  "ir_rounds": 10.9
+ },
+ "heat16": {
+  "N_eq": 594,
+  "cfg": {
+   "N": 30,
+   "prec": "jac",
+   "rounds": 19.8,
+   "warm": true,
+   "samples": 594.0
+  },
+  "plain_final": 0.1652538403140335,
+  "ir_final": 0.00010103124291866349,
+  "plain_first": 0.07191943363612935,
+  "ir_rounds": 19.8
+ }
+}

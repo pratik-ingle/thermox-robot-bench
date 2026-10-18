@@ -1,0 +1,73 @@
+{
+ "name": "mpc",
+ "desc": "Joint-torque MPC Hessian (d=70)",
+ "N_plain": 1000,
+ "N_ir": 1000,
+ "target": 0.0001,
+ "warm": true,
+ "n_systems": 60,
+ "d": 70,
+ "m": 1,
+ "cond_median": 1526.5533821585536,
+ "cond_max": 1559.9340960134743,
+ "jacobi_cond_median": 2599.607051884007,
+ "n_matrices": 60,
+ "sweeps": {
+  "mismatch=0.0": {
+   "plain_err": 1.6153379578424583,
+   "ir_rounds": 36.733333333333334,
+   "ir_reached": 0.7,
+   "ir_err_median": 9.381234475482533e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.01": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "mismatch=0.03": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "mismatch=0.1": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "bits=6": {
+   "plain_err": 1.0,
+   "ir_rounds": 0.0,
+   "ir_reached": 0.0,
+   "ir_err_median": 1.0,
+   "unstable": 1.0
+  },
+  "bits=8": {
+   "plain_err": 1.0,
+   "ir_rounds": 3.783333333333333,
+   "ir_reached": 0.06666666666666667,
+   "ir_err_median": 0.9132091598555176,
+   "unstable": 0.8833333333333333
+  },
+  "bits=10": {
+   "plain_err": 1.5604345471807435,
+   "ir_rounds": 36.86666666666667,
+   "ir_reached": 0.7333333333333333,
+   "ir_err_median": 9.359211898759401e-05,
+   "unstable": 0.0
+  },
+  "bits=12": {
+   "plain_err": 1.6534807375927723,
+   "ir_rounds": 35.983333333333334,
+   "ir_reached": 0.7666666666666667,
+   "ir_err_median": 9.360083542818545e-05,
+   "unstable": 0.0
+  }
+ }
+}

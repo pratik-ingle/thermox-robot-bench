@@ -1,0 +1,73 @@
+{
+ "name": "kf_iso",
+ "desc": "KF gain, isotropic camera (d=3, 6 RHS)",
+ "N_plain": 1000,
+ "N_ir": 10,
+ "target": 0.0001,
+ "warm": true,
+ "n_systems": 60,
+ "d": 3,
+ "m": 6,
+ "cond_median": 1.0,
+ "cond_max": 1.0,
+ "jacobi_cond_median": 1.0,
+ "n_matrices": 60,
+ "sweeps": {
+  "mismatch=0.0": {
+   "plain_err": 0.05429674586519441,
+   "ir_rounds": 6.833333333333333,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.969797973575739e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.01": {
+   "plain_err": 0.06038644090294324,
+   "ir_rounds": 7.016666666666667,
+   "ir_reached": 1.0,
+   "ir_err_median": 5.875269889965961e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.03": {
+   "plain_err": 0.08506566758966973,
+   "ir_rounds": 6.95,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.772642985112336e-05,
+   "unstable": 0.0
+  },
+  "mismatch=0.1": {
+   "plain_err": 0.27533926653140117,
+   "ir_rounds": 7.983333333333333,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.285273030287632e-05,
+   "unstable": 0.0
+  },
+  "bits=6": {
+   "plain_err": 0.05411178025086051,
+   "ir_rounds": 6.833333333333333,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.895541865028946e-05,
+   "unstable": 0.0
+  },
+  "bits=8": {
+   "plain_err": 0.05432433136099924,
+   "ir_rounds": 6.833333333333333,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.995828121973794e-05,
+   "unstable": 0.0
+  },
+  "bits=10": {
+   "plain_err": 0.05432317739000285,
+   "ir_rounds": 6.833333333333333,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.979705652467064e-05,
+   "unstable": 0.0
+  },
+  "bits=12": {
+   "plain_err": 0.05429200104254156,
+   "ir_rounds": 6.833333333333333,
+   "ir_reached": 1.0,
+   "ir_err_median": 6.96768423545608e-05,
+   "unstable": 0.0
+  }
+ }
+}

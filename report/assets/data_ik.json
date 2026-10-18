@@ -1,0 +1,25 @@
+{
+ "N_eq": 572,
+ "cfg": {
+  "N": 30,
+  "prec": "jac",
+  "rounds": 19.08040201005025,
+  "warm": true,
+  "samples": 572.4120603015075
+ },
+ "exact_pos": 1.5060271679702665e-05,
+ "exact_rot": 4.353408482428142e-06,
+ "plain_pos": 0.00023439158512359148,
+ "plain_rot": 1.8350782008150373e-05,
+ "ir_pos": 1.5043839668736527e-05,
+ "ir_rot": 4.353408482428142e-06,
+ "exact_grasp_mm": 9.406425468255781,
+ "plain_grasp_mm": 9.406419113957904,
+ "ir_grasp_mm": 9.406425466484224,
+ "exact_success": true,
+ "plain_success": true,
+ "ir_success": true,
+ "plain_lin": 0.07640994914232038,
+ "ir_lin": 8.346157646861084e-05,
+ "ir_rounds": 23.324048913043477
+}
