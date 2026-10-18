@@ -1,4 +1,5 @@
-"""Fill the generated per-problem tables into template.html -> index.html.
+"""Fill the generated per-problem tables into report/template.html -> docs/index.html
+(the GitHub Pages site).
 
 Placeholders: <!--@facts NAME-->, <!--@cost NAME-->, <!--@time NAME-->,
 <!--@verdict NAME-->, <!--@overview-->
@@ -8,6 +9,7 @@ import re
 import json
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+SITE = os.path.join(os.path.dirname(HERE), "docs")
 
 ORDER = [
     ("kf_iso", "Robot perception", "Kalman gain, isotropic camera"),
@@ -50,7 +52,7 @@ def overview(tables):
 
 
 def main():
-    with open(os.path.join(HERE, "assets", "tables.json")) as fh:
+    with open(os.path.join(SITE, "assets", "tables.json")) as fh:
         tables = json.load(fh)
     with open(os.path.join(HERE, "template.html")) as fh:
         html = fh.read()
@@ -68,14 +70,14 @@ def main():
         from PIL import Image
 
         def dims(m):
-            w, h = Image.open(os.path.join(HERE, m.group(1))).size
+            w, h = Image.open(os.path.join(SITE, m.group(1))).size
             return f'src="{m.group(1)}" width="{w}" height="{h}"'
         html = re.sub(r'src="(assets/[^"]+\.(?:png|gif))" width="\d+" height="\d+"', dims, html)
     except ImportError:
         pass
-    with open(os.path.join(HERE, "index.html"), "w") as fh:
+    with open(os.path.join(SITE, "index.html"), "w") as fh:
         fh.write(html)
-    print(f"filled {n} placeholders -> index.html; unfilled: {left}")
+    print(f"filled {n} placeholders -> docs/index.html; unfilled: {left}")
 
 
 if __name__ == "__main__":

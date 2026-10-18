@@ -1,5 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Thermox Refinement Benchmark</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Seventeen linear-algebra problems from robotics, physics and random matrices, solved by exact digital methods, plain thermodynamic sampling (thermox) and thermodynamic sampling inside iterative refinement, with a physical-practicality analysis.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Thermox Refinement Benchmark">
+<meta property="og:description" content="Can a thermodynamic linear-algebra chip help a robot? 17 problems, three solver families, real hardware limits.">
+<meta property="og:url" content="https://pratik-ingle.github.io/thermox-robot-bench/">
+<meta property="og:image" content="https://pratik-ingle.github.io/thermox-robot-bench/assets/bench_cost_to_accuracy.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237a2e57'/%3E%3Cpath d='M6 22 C10 8 14 26 18 14 S24 10 26 10' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap">
@@ -43,11 +54,21 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+:root { color-scheme: light; }
 body {
+  margin: 0;
   background: var(--paper); color: var(--ink);
   font: 400 17px/1.62 var(--f-body);
   -webkit-text-size-adjust: 100%;
 }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+.gh { display: inline-flex; align-items: center; gap: 8px; width: fit-content; max-width: 100%;
+  font: 600 14px/1.3 var(--f-body); color: var(--ink); text-decoration: none;
+  border: 1px solid var(--rule); background: var(--sheet); border-radius: 999px; padding: 7px 14px 7px 10px; }
+.gh:hover { border-color: var(--accent); color: var(--accent); }
+.gh svg { flex: none; width: 18px; height: 18px; fill: currentColor; }
+.gh span { overflow-wrap: anywhere; }
 .page {
   max-width: 1240px; margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -177,6 +198,8 @@ table.text td, table.text th { text-align: left; }
 .rand-grid { display: grid; gap: 22px; }
 footer.end { font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 6px; }
 </style>
+</head>
+<body>
 
 <div class="page">
 
@@ -185,6 +208,7 @@ footer.end { font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--r
   <h1>Thermox Refinement Benchmark</h1>
   <p class="dek">Seventeen linear-algebra problems, from the Kalman filter of a pick-and-place robot to dense random matrices. Each one is solved by an exact digital method, a standard digital iteration, a simulated thermodynamic chip on its own, and the same chip inside digital iterative refinement.</p>
   <p class="meta">Emulator: thermox 0.0.3 (Ornstein–Uhlenbeck sampler) · robot: Franka Panda in MuJoCo · accuracy target: 1e-4 relative error unless stated</p>
+  <a class="gh" href="https://github.com/pratik-ingle/thermox-robot-bench"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>Code, data and scripts: pratik-ingle/thermox-robot-bench</span></a>
   <ul class="legend" aria-label="Methods compared">
     <li><span class="sw" style="--c: var(--m-exact)"></span><span><b>Exact</b>: digital Cholesky solve, the reference answer</span></li>
     <li><span class="sw" style="--c: var(--m-cg)"></span><span><b>CG</b>: digital conjugate gradient, the standard iterative method</span></li>
@@ -830,9 +854,11 @@ footer.end { font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--r
 <section id="appendix" aria-labelledby="appendix-h">
   <p class="eyebrow">Appendix</p>
   <h2 id="appendix-h">Reproduce &amp; sources</h2>
-  <p>Everything is in the project folder <span class="data">kf_thermox_pick_place/</span>. Set <span class="data">PANDA_DIR</span> to the MuJoCo Menagerie Panda model and <span class="data">MUJOCO_GL=egl</span> on a headless Linux machine, then run:</p>
+  <p>All code, results and this page's sources are in the GitHub repository <a href="https://github.com/pratik-ingle/thermox-robot-bench">pratik-ingle/thermox-robot-bench</a>. <span class="data">./setup.sh</span> installs the dependencies and fetches the MuJoCo Menagerie Panda model. On a headless Linux machine set <span class="data">MUJOCO_GL=egl</span>, then run:</p>
+  <p class="eq">git clone https://github.com/pratik-ingle/thermox-robot-bench.git &amp;&amp; cd thermox-robot-bench &amp;&amp; ./setup.sh</p>
   <p class="eq">python thermo_benchmark.py --problem all &amp;&amp; python thermo_benchmark.py --report</p>
   <p class="eq">python report/make_assets.py --part method,kf,ik,mpc,heat,rand,tables,results &amp;&amp; python report/assemble.py</p>
+  <p class="small muted">The last command rebuilds this page in <span class="data">docs/</span>, which GitHub Pages serves.</p>
   <ul class="small">
     <li><b>Wall-clock times are a model, not measurements.</b> The parameters are stated above, and results beyond d = 256 are extrapolated.</li>
     <li><b>Oracle stopping.</b> Both CG and refinement stop on the true error; a real controller would stop on the residual.</li>
@@ -849,7 +875,8 @@ footer.end { font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--r
     <li>Frison et al., BLASFEO (small dense linear-algebra performance), <a href="https://arxiv.org/abs/1704.02457">arXiv:1704.02457</a></li>
   </ul>
   <footer class="end">
-    <p>Emulated with thermox 0.0.3 and MuJoCo 3.16 on CPU.</p>
+    <p>Source: <a href="https://github.com/pratik-ingle/thermox-robot-bench">github.com/pratik-ingle/thermox-robot-bench</a> · issues and questions: <a href="https://github.com/pratik-ingle/thermox-robot-bench/issues">open an issue</a></p>
+    <p>Emulated with thermox 0.0.3 and MuJoCo 3.16 on CPU · report built 18 October 2026.</p>
   </footer>
 </section>
 
@@ -865,3 +892,5 @@ footer.end { font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--r
   } catch (e) {}
 })();
 </script>
+</body>
+</html>

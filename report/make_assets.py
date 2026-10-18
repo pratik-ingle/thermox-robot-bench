@@ -1,8 +1,8 @@
-"""Figures, animations and per-problem tables for the HTML benchmark report.
+"""Figures, animations and per-problem tables for the project webpage (docs/).
 
 Usage (from the project folder, same environment as thermo_benchmark.py):
-    python report/make_assets.py --part method,kf,ik,mpc,heat,rand,tables
-Each part can run in its own process. Outputs go to report/assets/.
+    python report/make_assets.py --part method,kf,ik,mpc,heat,rand,tables,results
+Each part can run in its own process. Outputs go to docs/assets/.
 """
 import os
 import sys
@@ -30,7 +30,7 @@ import kf_thermox_pick_place as E
 import thermo_benchmark as T
 import thermo_benchmark_report as R
 
-OUT = os.path.join(HERE, "assets")
+OUT = os.path.join(ROOT, "docs", "assets")
 RES = R.load(os.path.join(ROOT, "results_bench"))
 TGT = 1e-4
 INK, INK2, MUTED, GRID, AXIS, SURF = R.INK, R.INK2, R.MUTED, R.GRID, R.AXIS, R.SURF

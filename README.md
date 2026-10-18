@@ -1,5 +1,9 @@
 # Kalman-filter pick-and-place: exact solve vs. thermodynamic solve (thermox)
 
+**Project page: [pratik-ingle.github.io/thermox-robot-bench](https://pratik-ingle.github.io/thermox-robot-bench/)**.
+It is the illustrated report: all 17 benchmark problems with pictures and animations
+comparing the solvers, the methods, the results and the physical-practicality analysis.
+
 A Franka Panda (MuJoCo) picks a cube off a moving conveyor using a Kalman-filter
 tracker. The only difference between methods is how the Kalman gain is computed:
 
@@ -137,6 +141,11 @@ refinement stalls. Warm start is what keeps the method working.
 
 ## Files
 
+- `docs/` – the [project page](https://pratik-ingle.github.io/thermox-robot-bench/), served by GitHub
+  Pages from this folder: `index.html` plus `assets/` (figures, animations, robot videos)
+- `report/` – sources of the project page: `template.html` (the page), `make_assets.py`
+  (regenerates figures and videos into `docs/assets/`) and `assemble.py` (fills the
+  generated tables into `docs/index.html`)
 - `kf_thermox_pick_place.py` – full experiment (scene, IK, KF, solvers, planner, rendering, plots)
 - `results_ir/` – same outputs with the iterative-refinement solvers, 100 seeds; video adds an
   "IR 3×10 warm" panel
